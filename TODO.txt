@@ -1,0 +1,40 @@
+DatabaseManager.py
+    Function: Lock Coordination.
+    Action: Requires TransactionManager and SiteManager. 
+    Lines: 40
+DataManager.py
+    Function: Lock Coordination.
+    Action: Requires SiteManager. 
+    Lines: 90
+LockManager.py
+    Function: Lock Coordination.
+    Action: Requires DatabaseManager. 
+    Lines: 90
+TransactionManager.py
+    Function: 
+    Action: Requires DatabaseManager and LockManager 
+    Lines: 400
+SiteManager
+    Function: Managing distributed sites. Fail / Recover
+    Action: Requires TransactionManager and LockManager
+    Lines: 150
+Site.py
+    Function: Unknown.
+    Action: Requires SiteManager and DataManager.
+    Lines: 15
+main.py
+    Function: Control flow.
+    Action: Write yourself after componenet completion.
+    Lines: 115
+script.sh
+    Function: Reprozip utility.
+    Action: Write / borrow at project end tomorrow.
+    Lines: 60
+
+
+
+Derisk: 
+    Remove shared lock. Use exclusive locks for everything.
+    Do not do multiversion read consistey. Beginro test cases do not do.
+    Consider removing site fail recover.
+    Remove deadlock detection
