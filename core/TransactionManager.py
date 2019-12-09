@@ -1,7 +1,7 @@
 
 
 
-def begin_transaction(time_step, read_only):
+def begin_transaction(transactionName, time_step, read_only):
     transactions[transactionName] = {
         'read_only': read_only,
         'pending_operations': []
@@ -19,7 +19,7 @@ def end_transaction(transaction):
 
 def commit_transaction(transaction):
     #release locks
-
+    #move fields from uncommitted to comitted
     #if aborted, what happens to the tasks after?
         #Delete all pending operations for variables for which the lock was held by the transaction
     del transactions[transaction]
@@ -46,6 +46,7 @@ def get_sites_for_variable(variable):
             sites_for_variable.append(site)
     return sites_for_variable
 
+
 def write_operation(transaction, key, value):
     site[pending_operations].append({
         'transaction' : transaction, 
@@ -53,7 +54,6 @@ def write_operation(transaction, key, value):
         'value' : value, 
         'type' : 'write'
     })
-
 
 def read_operation(transaction, key):
     if (transactions[transaction].read_only == True):
