@@ -8,3 +8,13 @@ def fail():
 
 def recover():
     pass
+
+def process_pending_operations():
+    #acquire lock
+    pass
+
+def process_recovery():
+    pass
+
+def process_failure():
+    pass

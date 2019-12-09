@@ -1,21 +1,20 @@
 import sys
 
 from core import TransactionManager
-#from core import DataManager
-#from core import LockManager
-#from core import SiteManager
+from core import DataManager
+from core import LockManager
+from core import SiteManager
 
 TIME_STEP = 0
 NUMBER_OF_VARIABLES = 20
 NUMBER_OF_SITES = 10
 
+transactions = {}
+data = {}
+locks = {}
+sites = {}
 
 def initialise():
-    transactions = {}
-    data = {}
-    locks = {}
-    sites = {}
-
     for i in range(0, NUMBER_OF_VARIABLES):
         variable = "x" + str(i+1)
         value = 10 * (i + 1)
@@ -24,14 +23,20 @@ def initialise():
             'committed_transactions' : [
                 #transaction
                 #value
-                #committed time
+                #committed_time
             ], 
+            #This field will likely not be required
             'uncommitted_transactions' : {
                 #transaction
                 #value
-                #committed time
+                #committed_time
             }, 
-            'locks' : [
+            'granted_locks' : [
+                #type: //shared or exclusive
+                #transaction: 
+            ], 
+            #This field will likely not be required
+            'waiting_locks' : [
                 #type: //shared or exclusive
                 #transaction: 
             ]
@@ -131,10 +136,10 @@ if __name__ == '__main__':
 
 
         elif line.startswith('dump'):
-            site = line[5:-1]
-            SM.dumpSite(site)
+            TransactionManager.dump()
 
         else:
 		    print('Command not recognised')
+            break
             
 

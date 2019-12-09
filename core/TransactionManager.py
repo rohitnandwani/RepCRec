@@ -1,5 +1,5 @@
 def commit_transaction(sites, transaction):
-    for s
+    for sites[site]
 
 def abort_transaction():
     pass
@@ -24,9 +24,12 @@ def begin_transaction(time_step, read_only):
 
 def end_transaction():
     pass
-    #commit or abort
+    #commit or abort or wait for pending dependant transactions to get processed
     #if 
     #delete transaction
+
+
+
 
 def grant_lock():
     pass
