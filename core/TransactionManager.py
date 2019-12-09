@@ -1,41 +1,30 @@
-def commit_transaction(sites, transaction):
-    for sites[site]
 
-def abort_transaction():
-    pass
 
-def abort_all_ongoing_transactions():
-    pass
 
 def begin_transaction(time_step, read_only):
     transactions[transactionName] = {
         'read_only': read_only,
-        'pendingOperation': {
-            'operation': None,
-            'options': {}
-        },
+        'pending_operations': []
         'start_time': time_step,
         'locks': {},
         'failed': False,
-        'failed_reason' : None
+        'abort_reason' : None
     }
 
 
-
-def end_transaction():
-    pass
-    #commit or abort or wait for pending dependant transactions to get processed
-    #if 
-    #delete transaction
+#assumes no transaction is waiting at any site on end
+def end_transaction(transaction):
+    
 
 
+def commit_transaction(transaction):
+    #release locks
 
+    #if aborted, what happens to the tasks after?
+        #Delete all pending operations for variables for which the lock was held by the transaction
+    del transactions[transaction]
 
-def grant_lock():
-    pass
-
-
-def reject_lock():
+def abort_transaction():
     pass
 
 
@@ -50,6 +39,32 @@ def dump(sites):
             print sites[site][site_data].value
 
 
+def get_sites_for_variable(variable):
+    sites_for_variable = []
+    for site in sites:
+        if variable in site.site_data.keys():
+            sites_for_variable.append(site)
+    return sites_for_variable
+
+def write_operation(transaction, key, value):
+    site[pending_operations].append({
+        'transaction' : transaction, 
+        'variable' : variable, 
+        'value' : value, 
+        'type' : 'write'
+    })
+
+
+def read_operation(transaction, key):
+    if (transactions[transaction].read_only == True):
+        read_type = 'read_only'
+    else:
+        read_type = "read"
+    site[pending_operations].append({
+        'transaction' : transaction, 
+        'variable' : variable, 
+        'type' : read_type
+    })
 
 
 

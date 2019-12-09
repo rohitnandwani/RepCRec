@@ -1,8 +1,5 @@
 def acquire_lock(site, variable, transaction, lock_type):
-    #read only transaction does not require locks
-    #But all previous transactions have to have been committed
-    #if transaction['read_only'] == True:
-    #    return True
+
     existing_exclusive_lock = False
     for lock in site[variable][locks]:
         if lock['type'] == 'exclusive':
@@ -19,11 +16,11 @@ def acquire_lock(site, variable, transaction, lock_type):
             'type' : 'shared', 
             'transaction' : transaction
         })
-        transaction[locks].append({
-            'type' : 'shared'
-            'site' : site, 
+        # transaction[locks].append({
+        #     'type' : 'shared'
+        #     'site' : site, 
 
-        })
+        # })
         return True
 
 

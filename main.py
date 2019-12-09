@@ -25,7 +25,7 @@ def initialise():
                 #value
                 #committed_time
             ], 
-            #This field will likely not be required
+            #This field will likely not be required. KEEP
             'uncommitted_transactions' : {
                 #transaction
                 #value
@@ -35,7 +35,7 @@ def initialise():
                 #type: //shared or exclusive
                 #transaction: 
             ], 
-            #This field will likely not be required
+            #This field will likely not be required. REMOVE
             'waiting_locks' : [
                 #type: //shared or exclusive
                 #transaction: 
@@ -109,7 +109,7 @@ if __name__ == '__main__':
             transaction = write_list[0].strip()
             key = write_list[1].strip()
             value = write_list[2].strip()
-            DataManager.write_value(transaction, key, value)
+            TransactionManager.read_operation(transaction, key, value)
 
 
         elif line.startswith('R'):
@@ -117,7 +117,7 @@ if __name__ == '__main__':
             write_list = write_tuple.split(',')
             transaction = write_list[0].strip()
             key = write_list[1].strip()
-            DataManager.read_value(transaction, key)
+            TransactionManager.read_operation(transaction, key)
 
 
         elif line.startswith('fail'):
@@ -141,5 +141,7 @@ if __name__ == '__main__':
         else:
 		    print('Command not recognised')
             break
+
+        SiteManager.process_pending_operations()
             
 
