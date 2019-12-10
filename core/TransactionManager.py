@@ -1,5 +1,7 @@
 from util.config import *
 
+import SiteManager
+
 def get_sites_for_variable(variable):
     sites_for_variable = []
     for site_name, site in sites.iteritems():
@@ -50,16 +52,15 @@ def end_transaction(transaction, time_step):
 
 
 def commit_transaction(transaction):
-    #release locks
-    for site in sites
-    #move fields from uncommitted to comitted
-    #if aborted, what happens to the tasks after?
-        #without the deadlock detection, only reason that this can happen is because of a site failure
-            #in that case all pending operations for a site will be deleted.
+    LockManager.release_locks_on_transaction(transaction)
+    SiteManager.process_uncommitted_transactions(transaction, True)
     del transactions[transaction]
 
-def abort_transaction():
-    pass
+def abort_transaction(transaction, abort_reason="site_failure"):
+    LockManager.release_locks_on_transaction(transaction)
+    SiteManager.process_uncommitted_transactions(transaction, False)
+    print ("Transaction " + transaction + "aborted. Reason " + abort_reason)
+    del transactions[transaction]
 
 
 def dump():
