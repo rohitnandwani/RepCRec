@@ -23,6 +23,10 @@ def process_pending_operations(time_step):
                     #give exclusive lock
 
     for site_name, site in sites.iteritems():
+
+        if site['available'] == False:
+            break
+        
         pending_operations_by_key = {}
         for pending_operation in site['pending_operations']:
             if pending_operation['variable'] not in pending_operations_by_key.keys():
@@ -69,7 +73,7 @@ def process_pending_operations(time_step):
 
 def fail(site, time_step):
     sites[site]['available'] == False
-    sites[site]['pending_operations'] = []
+    #sites[site]['pending_operations'] = []
     return
 
 

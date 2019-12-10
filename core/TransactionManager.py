@@ -24,26 +24,24 @@ def read_operation(transaction, variable):
         read_type = 'read_only'
     else:
         read_type = "read"
-    sites_for_variable = get_sites_for_variable(variable)
-    for site in sites_for_variable:
-            if sites[site]['available'] == True:
-            sites[site]['pending_operations'].append({
-                'transaction' : transaction, 
-                'variable' : variable, 
-                'type' : read_type
-            })
+    sites_for_variable = get_sites_for_variable(variable)\
+        if sites[site]['available'] == True:
+        sites[site]['pending_operations'].append({
+            'transaction' : transaction, 
+            'variable' : variable, 
+            'type' : read_type
+        })
 
 
 def write_operation(transaction, variable, value):
     sites_for_variable = get_sites_for_variable(variable)
     for site in sites_for_variable:
-        if sites[site]['available'] == True:
-            sites[site]['pending_operations'].append({
-                'transaction' : transaction, 
-                'variable' : variable, 
-                'value' : value, 
-                'type' : 'write'
-            })
+        sites[site]['pending_operations'].append({
+            'transaction' : transaction, 
+            'variable' : variable, 
+            'value' : value, 
+            'type' : 'write'
+        })
 
 
 #assumes no transaction is waiting at any site on end
