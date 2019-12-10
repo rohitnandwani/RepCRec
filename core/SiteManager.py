@@ -4,11 +4,11 @@ import LockManager
 import DataManager
 
 
-def fail(site):
+def fail(site, time_step):
     #TransactionManager.abort_all_ongoing_transactions
     pass
 
-def recover(site):
+def recover(site, time_step):
     pass
 
 
@@ -41,7 +41,7 @@ def process_pending_operations(time_step):
             #if there are any read only transactions let them go through first
             for pending_operation_for_key in pending_operations_for_key:
                 if pending_operation_for_key['type'] == 'read_only':
-                    DataManager.read_value(site, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, pending_operation_for_key['type'])
+                    DataManager.read_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, pending_operation_for_key['type'])
                     break
             
             #check if there are any exclusive locks / read locks on the variable

@@ -19,11 +19,11 @@ def initialise():
                 #committed_time
             ], 
             #This field will likely not be required. KEEP
-            'uncommitted_transactions' : {
+            'uncommitted_transactions' : [
                 #transaction
                 #value
                 #committed_time
-            }, 
+            ], 
             'locks' : [
                 #type: //shared or exclusive
                 #transaction: 
@@ -115,17 +115,17 @@ if __name__ == '__main__':
 
         elif line.startswith('fail'):
             site = line[5:-1]
-            SiteManager.fail(site)
+            SiteManager.fail(site, TIME_STEP)
 
 
         elif line.startswith('recover'):
             site = line[8:-1]
-            SiteManager.recover(site, Timer.CURRENT_TIME)
+            SiteManager.recover(site, TIME_STEP)
 
 
         elif line.startswith('end'):
             transaction = line[4:-1]
-            TransactionManager.end_transaction(transaction, Timer.CURRENT_TIME)
+            TransactionManager.end_transaction(transaction, TIME_STEP)
 
 
         elif line.startswith('dump'):

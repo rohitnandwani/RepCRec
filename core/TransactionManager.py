@@ -12,7 +12,7 @@ def begin_transaction(transactionName, time_step, read_only):
 
 
 #assumes no transaction is waiting at any site on end
-def end_transaction(transaction):
+def end_transaction(transaction, time_step):
     commit_transaction(transaction)
 
 
@@ -27,15 +27,15 @@ def abort_transaction():
     pass
 
 
-def dump(sites):
+def dump():
     for site in sites.keys():
-        print ("Site")
-        print (Site)
-        for site_data in sites[site].keys():
+        print ("site")
+        print (site)
+        for variable in sites[site]['site_data'].keys():
             print ("variable")
-            print site_data
+            print (variable)
             print ("value")
-            print sites[site][site_data].value
+            print (sites[site]['site_data'][variable]['value'])
 
 
 def get_sites_for_variable(variable):
