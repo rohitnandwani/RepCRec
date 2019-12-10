@@ -1,8 +1,6 @@
 import sys
 
 from core import TransactionManager
-from core import DataManager
-from core import LockManager
 from core import SiteManager
 
 TIME_STEP = 0
@@ -142,6 +140,6 @@ if __name__ == '__main__':
 		    print('Command not recognised')
             break
 
-        SiteManager.process_pending_operations()
+        SiteManager.process_pending_operations(time_step)
             
 
