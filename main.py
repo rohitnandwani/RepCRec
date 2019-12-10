@@ -103,6 +103,7 @@ if __name__ == '__main__':
             key = write_list[1].strip()
             value = write_list[2].strip()
             TransactionManager.write_operation(transaction, key, value)
+            SiteManager.process_pending_operations(TIME_STEP)
 
 
         elif line.startswith('R'):
@@ -111,6 +112,7 @@ if __name__ == '__main__':
             transaction = write_list[0].strip()
             key = write_list[1].strip()
             TransactionManager.read_operation(transaction, key)
+            SiteManager.process_pending_operations(TIME_STEP)
 
 
         elif line.startswith('fail'):
@@ -135,6 +137,5 @@ if __name__ == '__main__':
             print('Command not recognised')
             break
 
-        SiteManager.process_pending_operations(TIME_STEP)
             
 

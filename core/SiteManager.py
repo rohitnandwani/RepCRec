@@ -4,16 +4,8 @@ import LockManager
 import DataManager
 
 
-def fail(site, time_step):
-    #TransactionManager.abort_all_ongoing_transactions
-    pass
-
-def recover(site, time_step):
-    pass
-
-
-
 def process_pending_operations(time_step):
+    #transactions are not read or write then miss the time step
     #if there are any read only transactions let them go through first
     #check if there are any exclusive locks / read locks on the variable
         #if yes:
@@ -75,10 +67,10 @@ def process_pending_operations(time_step):
 
 
 
-
-
-def process_recovery():
+def fail(site, time_step):
+    #TransactionManager.abort_all_ongoing_transactions
     pass
 
-def process_failure():
+def recover(site, time_step):
     pass
+
