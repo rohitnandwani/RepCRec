@@ -8,7 +8,7 @@ def recover():
 def process_pending_operations():
     for site in sites:
         for variable in site[site_data]:
-            #if read only
+            #if read only, process that first
             #check if there are any exclusive locks / read locks on the variable
                 #if yes:
                     #check if there are any operations for that transaction

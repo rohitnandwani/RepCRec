@@ -16,7 +16,7 @@ def read_value(site, variable, transactionName, time_step, read_type):
             return sites[site][site_data][variable][uncommitted_transactions][-1]['value']
         else:
             return sites[site][site_data][variable][committed_transactions][-1]['value']
-
+ 
 
 def write_value(site, variable, transactionName, time_step, value):
     sites[site][site_data][variable][uncommitted_transactions].append({
@@ -24,6 +24,8 @@ def write_value(site, variable, transactionName, time_step, value):
         'value' : value, 
         'time_step' : time_step, 
     })
+
+
 
 
 
