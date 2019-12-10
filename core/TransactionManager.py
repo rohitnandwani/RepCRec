@@ -1,10 +1,9 @@
-
-
+from util.config import *
 
 def begin_transaction(transactionName, time_step, read_only):
     transactions[transactionName] = {
         'read_only': read_only,
-        'pending_operations': []
+        'pending_operations': [], 
         'start_time': time_step,
         'locks': {},
         'failed': False,
@@ -14,7 +13,7 @@ def begin_transaction(transactionName, time_step, read_only):
 
 #assumes no transaction is waiting at any site on end
 def end_transaction(transaction):
-    
+    commit_transaction(transaction)
 
 
 def commit_transaction(transaction):
@@ -41,30 +40,35 @@ def dump(sites):
 
 def get_sites_for_variable(variable):
     sites_for_variable = []
-    for site in sites:
-        if variable in site.site_data.keys():
-            sites_for_variable.append(site)
+    for site_name, site in sites.iteritems():
+        if variable in site['site_data'].keys():
+            sites_for_variable.append(site_name)
     return sites_for_variable
 
 
-def write_operation(transaction, key, value):
-    site[pending_operations].append({
-        'transaction' : transaction, 
-        'variable' : variable, 
-        'value' : value, 
-        'type' : 'write'
-    })
 
-def read_operation(transaction, key):
-    if (transactions[transaction].read_only == True):
+def write_operation(transaction, variable, value):
+    sites_for_variable = get_sites_for_variable(variable)
+    for site in sites_for_variable:
+        sites[site]['pending_operations'].append({
+            'transaction' : transaction, 
+            'variable' : variable, 
+            'value' : value, 
+            'type' : 'write'
+        })
+
+def read_operation(transaction, variable):
+    if (transactions[transaction]['read_only'] == True):
         read_type = 'read_only'
     else:
         read_type = "read"
-    site[pending_operations].append({
-        'transaction' : transaction, 
-        'variable' : variable, 
-        'type' : read_type
-    })
+    sites_for_variable = get_sites_for_variable(variable)
+    for site in sites_for_variable:
+        sites[site]['pending_operations'].append({
+            'transaction' : transaction, 
+            'variable' : variable, 
+            'type' : read_type
+        })
 
 
 

@@ -1,12 +1,14 @@
+from util.config import *
+
 import LockManager
 import DataManager
 
 
-def fail():
+def fail(site):
     #TransactionManager.abort_all_ongoing_transactions
     pass
 
-def recover():
+def recover(site):
     pass
 
 
@@ -28,14 +30,14 @@ def process_pending_operations(time_step):
                 #if write:
                     #give exclusive lock
 
-    for site in sites:
+    for site_name, site in sites.iteritems():
         pending_operations_by_key = {}
         for pending_operation in site['pending_operations']:
             if pending_operation['variable'] not in pending_operations_by_key.keys():
                 pending_operations_by_key[pending_operation['variable']] = [pending_operation]
             else:
                 pending_operations_by_key[pending_operation['variable']].append(pending_operation)
-        for pending_operations_for_key in pending_operations_by_key.keys():
+        for key_name, pending_operations_for_key in pending_operations_by_key.iteritems():
             #if there are any read only transactions let them go through first
             for pending_operation_for_key in pending_operations_for_key:
                 if pending_operation_for_key['type'] == 'read_only':
@@ -45,7 +47,8 @@ def process_pending_operations(time_step):
             #check if there are any exclusive locks / read locks on the variable
             existing_lock = False
             existing_lock_transaction = None
-            for lock in site[pending_operation_for_key['variable']]['locks']:
+
+            for lock in sites[site_name]['site_data'][pending_operation_for_key['variable']]['locks']:
                 if lock['type'] == 'exclusive' or lock['type'] == 'shared':
                     existing_lock = True
                     existing_lock_transaction = lock['transaction']
@@ -54,20 +57,20 @@ def process_pending_operations(time_step):
                 for pending_operation_for_key in reversed(pending_operations_for_key):
                     if pending_operation_for_key['transaction'] == existing_lock_transaction:
                         if pending_operation_for_key['type'] == 'read':
-                            LockManager.acquire_lock(site, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'shared')
-                            DataManager.read_value(site, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, 'read')
+                            LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'shared')
+                            DataManager.read_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, 'read')
                         elif pending_operations_for_key[-1]['type'] == 'write':
-                            LockManager.acquire_lock(site, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'exclusive')
-                            DataManager.write_value(site, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, pending_operation_for_key['value'])
+                            LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'exclusive')
+                            DataManager.write_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, pending_operation_for_key['value'])
                         break
                 break
             else:
                 if pending_operations_for_key[-1]['type'] == 'read':
-                    LockManager.acquire_lock(site, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], 'shared')
-                    DataManager.read_value(site, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], time_step, 'read')
+                    LockManager.acquire_lock(site_name, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], 'shared')
+                    DataManager.read_value(site_name, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], time_step, 'read')
                 elif pending_operations_for_key[-1]['type'] == 'write':
-                    LockManager.acquire_lock(site, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], 'exclusive')
-                    DataManager.write_value(site, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], time_step, pending_operations_for_key[-1]['value'])
+                    LockManager.acquire_lock(site_name, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], 'exclusive')
+                    DataManager.write_value(site_name, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], time_step, pending_operations_for_key[-1]['value'])
                     break
 
 

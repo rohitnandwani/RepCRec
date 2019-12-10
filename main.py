@@ -1,16 +1,11 @@
 import sys
 
+from util.config import *
+
 from core import TransactionManager
 from core import SiteManager
 
-TIME_STEP = 0
-NUMBER_OF_VARIABLES = 20
-NUMBER_OF_SITES = 10
 
-transactions = {}
-data = {}
-locks = {}
-sites = {}
 
 def initialise():
     for i in range(0, NUMBER_OF_VARIABLES):
@@ -29,7 +24,7 @@ def initialise():
                 #value
                 #committed_time
             }, 
-            'granted_locks' : [
+            'locks' : [
                 #type: //shared or exclusive
                 #transaction: 
             ], 
@@ -43,14 +38,14 @@ def initialise():
     for i in range(0, NUMBER_OF_SITES):
         index = str(i+1)
         site_data_indices = []
+        site_data = {}
         for j in range(0, NUMBER_OF_VARIABLES):
-            if (1 + ((j+1) % 10) == i +1):
+            if (1 + ((j+1) % 10) == i + 1):
                 site_data_indices.append(j+1)
-            elif (j+1 % 2 == 0):
-                 site_data_indices.append(j+1)
-        
-        site_data = [data["x" + str(k)] for k in site_data_indices]
-
+                site_data["x" + str(j+1)] = data["x" + str(j+1)]
+            elif ((j+1) % 2 == 0):
+                site_data_indices.append(j+1)
+                site_data["x" + str(j+1)] = data["x" + str(j+1)]
         sites[index] = {
             'site_data' : site_data, 
             'available': True,
@@ -93,12 +88,12 @@ if __name__ == '__main__':
 
         elif line.startswith('beginRO'):
             transaction = line[8:-1]
-            TransactionManager.begin_transaction(transaction, Timer.CURRENT_TIME, True)
+            TransactionManager.begin_transaction(transaction, TIME_STEP, True)
 
 
         elif line.startswith('begin'):
             transaction = line[6:-1]
-            TransactionManager.begin_transaction(transaction, Timer.CURRENT_TIME, False)
+            TransactionManager.begin_transaction(transaction, TIME_STEP, False)
 
 
         elif line.startswith('W'):
@@ -107,7 +102,7 @@ if __name__ == '__main__':
             transaction = write_list[0].strip()
             key = write_list[1].strip()
             value = write_list[2].strip()
-            TransactionManager.read_operation(transaction, key, value)
+            TransactionManager.write_operation(transaction, key, value)
 
 
         elif line.startswith('R'):
@@ -137,9 +132,9 @@ if __name__ == '__main__':
             TransactionManager.dump()
 
         else:
-		    print('Command not recognised')
+            print('Command not recognised')
             break
 
-        SiteManager.process_pending_operations(time_step)
+        SiteManager.process_pending_operations(TIME_STEP)
             
 
