@@ -68,9 +68,11 @@ def process_pending_operations(time_step):
 
 
 def fail(site, time_step):
-    #TransactionManager.abort_all_ongoing_transactions
-    pass
+    sites[site]['available'] == False
+    sites[site]['pending_operations'] = []
+    return
+
 
 def recover(site, time_step):
-    pass
-
+    sites[site]['available'] == True
+    sites[site]['reset_time'] == time_step

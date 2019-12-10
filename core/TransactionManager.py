@@ -26,22 +26,24 @@ def read_operation(transaction, variable):
         read_type = "read"
     sites_for_variable = get_sites_for_variable(variable)
     for site in sites_for_variable:
-        sites[site]['pending_operations'].append({
-            'transaction' : transaction, 
-            'variable' : variable, 
-            'type' : read_type
-        })
+            if sites[site]['available'] == True:
+            sites[site]['pending_operations'].append({
+                'transaction' : transaction, 
+                'variable' : variable, 
+                'type' : read_type
+            })
 
 
 def write_operation(transaction, variable, value):
     sites_for_variable = get_sites_for_variable(variable)
     for site in sites_for_variable:
-        sites[site]['pending_operations'].append({
-            'transaction' : transaction, 
-            'variable' : variable, 
-            'value' : value, 
-            'type' : 'write'
-        })
+        if sites[site]['available'] == True:
+            sites[site]['pending_operations'].append({
+                'transaction' : transaction, 
+                'variable' : variable, 
+                'value' : value, 
+                'type' : 'write'
+            })
 
 
 #assumes no transaction is waiting at any site on end
@@ -51,9 +53,11 @@ def end_transaction(transaction, time_step):
 
 def commit_transaction(transaction):
     #release locks
+    for site in sites
     #move fields from uncommitted to comitted
     #if aborted, what happens to the tasks after?
-        #Delete all pending operations for variables for which the lock was held by the transaction
+        #without the deadlock detection, only reason that this can happen is because of a site failure
+            #in that case all pending operations for a site will be deleted.
     del transactions[transaction]
 
 def abort_transaction():
