@@ -2,6 +2,7 @@ from util.config import *
 
 import LockManager
 import DataManager
+import TransactionManager
 
 
 def process_pending_operations(time_step):
@@ -61,22 +62,23 @@ def process_pending_operations(time_step):
                         if pending_operation_for_key['type'] == 'read':
                             LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'shared')
                             DataManager.read_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, 'read')
+                            break
                         elif pending_operations_for_key[-1]['type'] == 'write':
                             LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'exclusive')
                             DataManager.write_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, pending_operation_for_key['value'])
-                        break
-                break
+                            break
             else:
-                is_completed_transaction_for_time_step = False
-                #for loop here
-                if pending_operations_for_key[-1]['type'] == 'read':
-                    LockManager.acquire_lock(site_name, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], 'shared')
-                    DataManager.read_value(site_name, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], time_step, 'read')
-                elif pending_operations_for_key[-1]['type'] == 'write':
-                    
-                    LockManager.acquire_lock(site_name, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], 'exclusive')
-                    DataManager.write_value(site_name, pending_operations_for_key[-1]['variable'], pending_operations_for_key[-1]['transaction'], time_step, pending_operations_for_key[-1]['value'])
-                    break
+                for pending_operation_for_key in reversed(pending_operations_for_key):
+                    #do not forget to pending operations once processed
+                    if pending_operation_for_key['type'] == 'read':
+                        LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'shared')
+                        DataManager.read_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, 'read')
+                        break
+                    elif pending_operation_for_key['type'] == 'write':
+                        if existing_lock == False:
+                            LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'exclusive')
+                            DataManager.write_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, pending_operation_for_key['value'])
+                            break
 
 
 def process_uncommitted_transactions(transaction, is_transaction_successful):
@@ -85,16 +87,18 @@ def process_uncommitted_transactions(transaction, is_transaction_successful):
             if is_transaction_successful == True:
                 sites[site]['site_data'][variable]['committed_transactions'].append(sites[site]['site_data'][variable]['uncommitted_transactions'])
             else:
-                del sites[site]['site_data'][variable]['uncommitted_transactions']
+                sites[site]['site_data'][variable]['uncommitted_transactions'] = []
 
 
 
 def fail(site, time_step):
     sites[site]['available'] == False
     #sites[site]['pending_operations'] = []
+    TransactionManager.process_site_failure(site)
     return
 
 
 def recover(site, time_step):
     sites[site]['available'] == True
     sites[site]['reset_time'] == time_step
+    #TransactionManager.process_site_recovery

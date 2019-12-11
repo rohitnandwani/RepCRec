@@ -46,21 +46,32 @@ def write_operation(transaction, variable, value):
         })
 
 
-#assumes no transaction is waiting at any site on end
-def end_transaction(transaction, time_step):
-    commit_transaction(transaction)
-
-
 def commit_transaction(transaction):
     LockManager.release_locks_on_transaction(transaction)
     SiteManager.process_uncommitted_transactions(transaction, True)
     del transactions[transaction]
+
 
 def abort_transaction(transaction, abort_reason="site_failure"):
     LockManager.release_locks_on_transaction(transaction)
     SiteManager.process_uncommitted_transactions(transaction, False)
     print ("Transaction " + transaction + "aborted. Reason " + abort_reason)
     del transactions[transaction]
+
+
+#assumes no transaction is waiting at any site on end
+def end_transaction(transaction, time_step):
+    commit_transaction(transaction)
+
+
+def process_site_failure(site):
+    unique_transactions_to_abort = []
+    for pending_operation in sites[site]['pending_operations']:
+        if pending_operation['tansaction'] not in unique_transactions_to_abort:
+            unique_transactions_to_abort.append(pending_operation['transaction'])
+    for unique_transaction in unique_transactions_to_abort:
+        abort_transaction(transaction, 'site_failure')
+
 
 
 def dump():
