@@ -5,6 +5,7 @@ from util.config import *
 from core import TransactionManager
 from core import SiteManager
 
+TIME_STEP = 0
 
 
 def initialise():

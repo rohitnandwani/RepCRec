@@ -9,6 +9,8 @@ def process_pending_operation(pending_operation):
 
 
 
+
+
 def process_pending_operations(time_step):
     #transactions are not read or write then miss the time step
     #if there are any read only transactions let them go through first
