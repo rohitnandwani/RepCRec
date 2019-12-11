@@ -61,11 +61,11 @@ def process_pending_operations_for_site(site_name, site, time_step):
                 for pending_operation_for_key in reversed(pending_operations_for_key):
                     if pending_operation_for_key['transaction'] == existing_lock_transaction:
                         if pending_operation_for_key['type'] == 'read':
-                            LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'shared')
+                            #LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'shared')
                             DataManager.read_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, 'read')
                             completed_operation = pending_operation_for_key
                         elif pending_operation_for_key['type'] == 'write':
-                            LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'exclusive')
+                            #LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'exclusive')
                             DataManager.write_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, pending_operation_for_key['value'])
                             completed_operation = pending_operation_for_key
 
