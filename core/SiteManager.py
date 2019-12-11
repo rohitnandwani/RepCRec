@@ -5,13 +5,7 @@ import DataManager
 import TransactionManager
 
 
-def process_pending_operation(pending_operation):
-
-
-
-
-
-def process_pending_operations(time_step):
+def process_pending_operations_for_site(site_name, site, time_step):
     #transactions are not read or write then miss the time step
     #if there are any read only transactions let them go through first
     #check if there are any exclusive locks on the variable
@@ -32,10 +26,10 @@ def process_pending_operations(time_step):
                     #if not:
                         #give exclusive lock
 
-    for site_name, site in sites.iteritems():
+    
 
         if site['available'] == False:
-            break
+            return
 
         pending_operations_by_key = {}
         for pending_operation in site['pending_operations']:
@@ -109,6 +103,13 @@ def process_pending_operations(time_step):
                         break
 
 
+
+def process_pending_operations(time_step):
+    for site_name, site in sites.iteritems():
+        process_pending_operations_for_site(site_name, site, time_step)
+
+
+
 def process_uncommitted_transactions(transaction, is_transaction_successful):
     for site in sites.keys():
         for variable in sites[site]['site_data'][variable]:
@@ -121,6 +122,7 @@ def process_uncommitted_transactions(transaction, is_transaction_successful):
 
 def fail(site, time_step):
     sites[site]['available'] == False
+    sites[site]['failed_time'] = time_step
     #sites[site]['pending_operations'] = []
     TransactionManager.process_site_failure(site)
     return
@@ -128,5 +130,6 @@ def fail(site, time_step):
 
 def recover(site, time_step):
     sites[site]['available'] == True
-    sites[site]['reset_time'] == time_step
-    #TransactionManager.process_site_recovery
+    sites[site]['recovered_time'] == time_step
+    for i in range(sites[site]['failed_time'], sites[site]['recovered_time']):
+        process_pending_operations_for_site(site, sites[site], i)
