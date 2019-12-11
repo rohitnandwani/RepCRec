@@ -57,49 +57,51 @@ def process_pending_operations_for_site(site_name, site, time_step):
                     existing_lock_transaction = lock['transaction']
             
             if existing_lock == True and existing_lock_type == 'exclusive':
-                completed_pending_operation = None
+                completed_operation = None
                 for pending_operation_for_key in reversed(pending_operations_for_key):
                     if pending_operation_for_key['transaction'] == existing_lock_transaction:
                         if pending_operation_for_key['type'] == 'read':
                             LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'shared')
                             DataManager.read_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, 'read')
-                            completed_pending_operation = pending_operation_for_key
+                            completed_operation = pending_operation_for_key
                         elif pending_operation_for_key['type'] == 'write':
                             LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'exclusive')
                             DataManager.write_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, pending_operation_for_key['value'])
-                            completed_pending_operation = pending_operation_for_key
+                            completed_operation = pending_operation_for_key
 
-                        if completed_pending_operation is not None:
+                        if completed_operation is not None:
                             updated_pending_operations_for_site = []
                             deleted_pending_operation = False
                             for pending_operation in reversed(sites[site_name]['pending_operations']):
                                 if (not pending_operation == completed_operation) and deleted_pending_operation == False:
                                     updated_pending_operations_for_site.append(pending_operation)
-                            sites[site_name]['pending_operations'] = reversed(updated_pending_operations_for_site)
+                            updated_pending_operations_for_site.reverse()
+                            sites[site_name]['pending_operations'] =  updated_pending_operations_for_site
                             break
 
 
             else:
-                completed_pending_operation = None
+                completed_operation = None
                 for pending_operation_for_key in reversed(pending_operations_for_key):
                     #do not forget to pending operations once processed
                     if pending_operation_for_key['type'] == 'read':
                         LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'shared')
                         DataManager.read_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, 'read')
-                        completed_pending_operation = pending_operation_for_key
+                        completed_operation = pending_operation_for_key
                     elif pending_operation_for_key['type'] == 'write':
                         if existing_lock == False:
                             LockManager.acquire_lock(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], 'exclusive')
                             DataManager.write_value(site_name, pending_operation_for_key['variable'], pending_operation_for_key['transaction'], time_step, pending_operation_for_key['value'])
-                            completed_pending_operation = pending_operation_for_key
+                            completed_operation = pending_operation_for_key
 
-                    if completed_pending_operation is not None:
+                    if completed_operation is not None:
                         updated_pending_operations_for_site = []
                         deleted_pending_operation = False
                         for pending_operation in reversed(sites[site_name]['pending_operations']):
                             if (not pending_operation == completed_operation) and deleted_pending_operation == False:
                                 updated_pending_operations_for_site.append(pending_operation)
-                        sites[site_name]['pending_operations'] = reversed(updated_pending_operations_for_site)
+                        updated_pending_operations_for_site.reverse()
+                        sites[site_name]['pending_operations'] =  updated_pending_operations_for_site
                         break
 
 
@@ -112,7 +114,7 @@ def process_pending_operations(time_step):
 
 def process_uncommitted_transactions(transaction, is_transaction_successful):
     for site in sites.keys():
-        for variable in sites[site]['site_data'][variable]:
+        for variable in sites[site]['site_data']:
             if is_transaction_successful == True:
                 sites[site]['site_data'][variable]['committed_transactions'].append(sites[site]['site_data'][variable]['uncommitted_transactions'])
             else:

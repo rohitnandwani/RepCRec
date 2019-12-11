@@ -1,6 +1,7 @@
 from util.config import *
 
 import SiteManager
+import LockManager
 
 def get_sites_for_variable(variable):
     sites_for_variable = []
@@ -26,8 +27,8 @@ def read_operation(transaction, variable):
         read_type = 'read_only'
     else:
         read_type = "read"
-    sites_for_variable = get_sites_for_variable(variable)\
-        if sites[site]['available'] == True:
+    sites_for_variable = get_sites_for_variable(variable)
+    for site in sites_for_variable:
         sites[site]['pending_operations'].append({
             'transaction' : transaction, 
             'variable' : variable, 

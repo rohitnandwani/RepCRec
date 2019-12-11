@@ -1,4 +1,8 @@
-def initialise():
+from config import *
+
+def initialise(time_step):
+    data = {}
+
     for i in range(0, NUMBER_OF_VARIABLES):
         variable = "x" + str(i+1)
         value = 10 * (i + 1)
@@ -41,8 +45,8 @@ def initialise():
             'site_data' : site_data, 
             'available': True,
             'pending_operations': [],
-            'failed_time' : TIME_STEP, 
-            'recovered_time' : TIME_STEP
+            'failed_time' : time_step, 
+            'recovered_time' : time_step
         }
 
     return

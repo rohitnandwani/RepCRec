@@ -1,6 +1,3 @@
-Finsih the transaction commit
-Factor in changes for shared locking
-Implement fail / recover mechanism 
 Try out some sample test cases. At least the simplest ones should work.
 Reprozip (Maybe add script to run all test files)
 If time permits:

@@ -10,7 +10,7 @@ TIME_STEP = 0
 
 if __name__ == '__main__':
 
-    initialise()
+    initialise(0)
 
     inputSource = sys.stdin
 
