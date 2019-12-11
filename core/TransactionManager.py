@@ -71,7 +71,7 @@ def process_site_failure(site):
         if pending_operation['tansaction'] not in unique_transactions_to_abort:
             unique_transactions_to_abort.append(pending_operation['transaction'])
     for unique_transaction in unique_transactions_to_abort:
-        abort_transaction(transaction, 'site_failure')
+        abort_transaction(unique_transaction, 'site_failure')
 
 
 

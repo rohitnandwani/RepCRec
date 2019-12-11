@@ -116,7 +116,7 @@ def process_uncommitted_transactions(transaction, is_transaction_successful):
     for site in sites.keys():
         for variable in sites[site]['site_data']:
             if is_transaction_successful == True:
-                sites[site]['site_data'][variable]['committed_transactions'].append(sites[site]['site_data'][variable]['uncommitted_transactions'])
+                sites[site]['site_data'][variable]['committed_transactions'].extend(sites[site]['site_data'][variable]['uncommitted_transactions'])
             else:
                 sites[site]['site_data'][variable]['uncommitted_transactions'] = []
 
